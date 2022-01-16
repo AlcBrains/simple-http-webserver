@@ -1,10 +1,7 @@
 package com.christopher.javaserver.handlers;
 
-import com.christopher.javaserver.helpers.RequestHelpers;
 import com.sun.net.httpserver.HttpExchange;
-
 import java.io.IOException;
-import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;

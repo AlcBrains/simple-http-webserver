@@ -1,6 +1,5 @@
 package com.christopher.javaserver.handlers;
 
-import com.christopher.javaserver.helpers.RequestHelpers;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.BufferedReader;
@@ -8,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -23,7 +21,7 @@ public class PostHandler extends BaseHandler {
         String query = br.readLine();
         Map<String, String> parameters = parseQuery(query);
         // send response
-        writeResponseBody(exchange,parameters);
+        writeResponseBody(exchange, parameters);
     }
 
 
