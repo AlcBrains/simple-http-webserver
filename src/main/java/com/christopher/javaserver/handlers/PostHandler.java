@@ -7,11 +7,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class PostHandler implements BaseHandler {
+public class PostHandler extends BaseHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -20,11 +21,15 @@ public class PostHandler implements BaseHandler {
         InputStreamReader isr = new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(isr);
         String query = br.readLine();
-        Map<String, List<String>> parameters = RequestHelpers.parseQuery(query);
-
+        Map<String, String> parameters = parseQuery(query);
         // send response
-        RequestHelpers.writeResponseBody(exchange,parameters);
+        writeResponseBody(exchange,parameters);
     }
 
 
+    @Override
+    protected HashMap<String, String> parseQuery(String query) {
+        //parse query as json
+        return null;
+    }
 }

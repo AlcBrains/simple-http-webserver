@@ -1,6 +1,5 @@
 package com.christopher.javaserver;
 
-import com.christopher.javaserver.handlers.BaseHandler;
 import com.christopher.javaserver.handlers.GetHandler;
 import com.christopher.javaserver.handlers.PostHandler;
 import com.sun.net.httpserver.HttpServer;
