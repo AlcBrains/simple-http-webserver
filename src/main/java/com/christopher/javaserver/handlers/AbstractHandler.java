@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-abstract class AbstractHandler implements HttpHandler {
+public abstract class AbstractHandler implements HttpHandler {
 
     ObjectMapper objectMapper;
 

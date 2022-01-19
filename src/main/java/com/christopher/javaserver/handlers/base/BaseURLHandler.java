@@ -1,5 +1,6 @@
-package com.christopher.javaserver.handlers;
+package com.christopher.javaserver.handlers.base;
 
+import com.christopher.javaserver.handlers.AbstractHandler;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.util.HashMap;

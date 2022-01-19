@@ -1,6 +1,6 @@
 package com.christopher.javaserver;
 
-import com.christopher.javaserver.handlers.BaseURLHandler;
+import com.christopher.javaserver.handlers.base.BaseURLHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
