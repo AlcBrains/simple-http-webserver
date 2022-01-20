@@ -1,6 +1,7 @@
 package com.christopher.javaserver;
 
 import com.christopher.javaserver.handlers.base.BaseURLHandler;
+import com.christopher.javaserver.handlers.employee.EmployeeHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -17,12 +18,16 @@ public class Application {
 
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT_NO), 0);
 
-        System.out.println("server started at " + PORT_NO);
+
         server.createContext("/", new BaseURLHandler());
+        server.createContext("/employees", new EmployeeHandler());
 
         Executor executor = Executors.newFixedThreadPool(THREAD_COUNT);
 
         server.setExecutor(executor);
         server.start();
+
+        System.out.println("server started at " + PORT_NO);
+
     }
 }

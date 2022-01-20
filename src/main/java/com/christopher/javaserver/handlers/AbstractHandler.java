@@ -1,6 +1,8 @@
 package com.christopher.javaserver.handlers;
 
+import com.christopher.javaserver.db.Connector;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -12,20 +14,30 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractHandler implements HttpHandler {
 
     ObjectMapper objectMapper;
+    protected Connector connector;
 
     public AbstractHandler() {
+        try {
+            connector = Connector.getInstance("jdbc:mysql://localhost:3306/employees", "root", "root");
+        } catch (SQLException | ClassNotFoundException exception) {
+            exception.printStackTrace();
+        }
         objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
     /**
      * TODO : remove when debugging is finished
      * Prints basic request info. Used for debugging purposes
+     *
      * @param exchange the HttpExchange object under inspection
      */
     private void printRequestInfo(HttpExchange exchange) {
@@ -49,7 +61,8 @@ public abstract class AbstractHandler implements HttpHandler {
 
     /**
      * Writes the provided response to an outputStream and sends it to the client
-     * @param exchange the HttpExchange object to write data to
+     *
+     * @param exchange     the HttpExchange object to write data to
      * @param responseData the actual data
      * @throws IOException if the responseData is malformed
      */
@@ -65,6 +78,7 @@ public abstract class AbstractHandler implements HttpHandler {
     /**
      * Checks for request method and parses the request parameters (or the request body) and returns parsed request
      * data
+     *
      * @param exchange the HttpExchange object handling the request
      * @return the parsed request data in hashmap form
      * @throws IOException if there is malformed JSON data in POST type requests
@@ -72,17 +86,22 @@ public abstract class AbstractHandler implements HttpHandler {
     protected HashMap<String, Object> parseRequestQuery(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
         return method.equals("GET")
-                ? parseGetRequestParam(exchange.getRequestURI().getQuery())
+                ? parseGetRequestParam(exchange.getRequestURI().getPath(), exchange.getRequestURI().getQuery())
                 : parsePostRequestBody(exchange.getRequestBody());
     }
 
     /**
      * Parses GET request parameters
+     *
      * @param query the String representation of the request parameters
      * @return the parsed request data in hashmap form
      */
-    private HashMap<String, Object> parseGetRequestParam(String query) {
+    private HashMap<String, Object> parseGetRequestParam(String path, String query) {
         HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("path", path);
+        if (query == null) {
+            return parameters;
+        }
         String[] pairs = query.split("[&]");
         for (String pair : pairs) {
             String[] param = pair.split("[=]");
@@ -98,6 +117,7 @@ public abstract class AbstractHandler implements HttpHandler {
 
     /**
      * Parses POST request body
+     *
      * @param requestBody the InputStream representation of the request body
      * @return the parsed request data in hashmap form
      * @throws IOException if there is malformed JSON data in the request body
