@@ -14,15 +14,15 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractHandler implements HttpHandler {
 
-    ObjectMapper objectMapper;
     protected Connector connector;
+    ObjectMapper objectMapper;
 
     public AbstractHandler() {
         try {
@@ -66,14 +66,22 @@ public abstract class AbstractHandler implements HttpHandler {
      * @param responseData the actual data
      * @throws IOException if the responseData is malformed
      */
-    protected void writeResponseBody(HttpExchange exchange, Map<String, Object> responseData) throws IOException {
-        String response = objectMapper.writeValueAsString(responseData);
+
+    protected void writeResponseBody(HttpExchange exchange, List<Object> responseData, int rCode) throws IOException {
+        String response;
+        if (responseData.size() == 1) {
+            response = objectMapper.writeValueAsString(responseData.get(0));
+        } else {
+            response = objectMapper.writeValueAsString(responseData);
+        }
+
         exchange.getResponseHeaders().set("Content-Type", "application/json");
-        exchange.sendResponseHeaders(200, response.length());
+        exchange.sendResponseHeaders(rCode, response.length());
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
     }
+
 
     /**
      * Checks for request method and parses the request parameters (or the request body) and returns parsed request
@@ -87,7 +95,7 @@ public abstract class AbstractHandler implements HttpHandler {
         String method = exchange.getRequestMethod();
         return method.equals("GET")
                 ? parseGetRequestParam(exchange.getRequestURI().getPath(), exchange.getRequestURI().getQuery())
-                : parsePostRequestBody(exchange.getRequestBody());
+                : parsePostRequestBody(exchange.getRequestURI().getPath(), exchange.getRequestBody());
     }
 
     /**
@@ -99,6 +107,7 @@ public abstract class AbstractHandler implements HttpHandler {
     private HashMap<String, Object> parseGetRequestParam(String path, String query) {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("path", path);
+        parameters.put("method", "GET");
         if (query == null) {
             return parameters;
         }
@@ -122,8 +131,11 @@ public abstract class AbstractHandler implements HttpHandler {
      * @return the parsed request data in hashmap form
      * @throws IOException if there is malformed JSON data in the request body
      */
-    private HashMap<String, Object> parsePostRequestBody(InputStream requestBody) throws IOException {
+    private HashMap<String, Object> parsePostRequestBody(String path, InputStream requestBody) throws IOException {
         String query = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
-        return (HashMap<String, Object>) objectMapper.readValue(query, Map.class);
+        HashMap<String, Object> parameters = (HashMap<String, Object>) objectMapper.readValue(query, Map.class);
+        parameters.put("path", path);
+        parameters.put("method", "POST");
+        return parameters;
     }
 }

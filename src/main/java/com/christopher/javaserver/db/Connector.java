@@ -37,4 +37,5 @@ public class Connector {
         Statement stmt = connection.createStatement();
         return stmt.executeQuery(query);
     }
+
 }

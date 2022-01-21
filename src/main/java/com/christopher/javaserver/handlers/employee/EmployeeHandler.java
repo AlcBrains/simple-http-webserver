@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class EmployeeHandler extends AbstractHandler {
@@ -18,30 +19,120 @@ public class EmployeeHandler extends AbstractHandler {
     public void handle(HttpExchange exchange) throws IOException {
 
         HashMap<String, Object> params = parseRequestQuery(exchange);
-        HashMap<String, Object> data = new HashMap<>();
+        String path = (String) params.get("path");
+        String method = (String) params.get("method");
 
-        if (params.get("path").equals("/employees")) {
-            //write a json
-            try {
-                ResultSet resultset = connector.executeQuery("select * from employees e limit 4");
-                ArrayList<Employee> employees = new ArrayList<>();
-                while (resultset.next()) {
-                    Employee employee = new Employee();
-                    employee.setId(Integer.parseInt(resultset.getString("emp_no")));
-                    employee.setFirstName(resultset.getString("first_name"));
-                    employee.setLastName(resultset.getString("last_name"));
-                    employee.setGender(resultset.getString("gender"));
-                    employee.setHireDate(LocalDate.parse(resultset.getString("hire_date")));
-                    employee.setBirthDate(LocalDate.parse(resultset.getString("birth_date")));
-                    employees.add(employee);
-                }
-                data.put("employees", employees);
-            } catch (SQLException e) {
-                data.put("error", e.getMessage());
-                e.printStackTrace();
-            }
-            writeResponseBody(exchange, data);
+
+        //Get all employees
+        if (path.equals("/employees")) {
+            writeResponseBody(exchange, getAllClients(), 200);
+            //Get single employee
+        } else if (path.contains("/employees/employee/") && method.equals("GET")) {
+            int empNo = Integer.parseInt(path.split("/")[path.split("/").length - 1]);
+            writeResponseBody(exchange, getEmployee(Integer.toString(empNo)), 200);
+            //Create an employee
+        } else if (path.equals("/employees/employee/create")) {
+            writeResponseBody(exchange, List.of(createEmployee(params)), 201);
+            //Delete client
+        } else if (path.contains("/employees/employee/") && method.equals("DELETE")) {
+            int empNo = Integer.parseInt(path.split("/")[path.split("/").length - 1]);
+            writeResponseBody(exchange, List.of(deleteEmployee(Integer.toString(empNo))), 204);
+            //Update client
+        } else if (path.contains("/employees/employee/") && method.equals("PATCH")) {
+            Integer empNo = Integer.parseInt(path.split("/")[path.split("/").length - 1]);
+        } else {
+
         }
 
+
+    }
+
+    private List<Object> getAllClients() {
+        ArrayList<Object> employees = new ArrayList<>();
+        try {
+            ResultSet resultset = connector.executeQuery("select * from employees e limit 4");
+            while (resultset.next()) {
+                Employee employee = new Employee();
+                getEmployeeData(resultset, employee);
+                employees.add(employee);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
+
+    private List<Object> getEmployee(String empNo) {
+        ArrayList<Object> singletonList = new ArrayList<>();
+        try {
+            ResultSet resultset = connector.executeQuery("select * from employees e where emp_no = " + empNo);
+            Employee employee = new Employee();
+            while (resultset.next()) {
+                getEmployeeData(resultset, employee);
+            }
+            singletonList.add(employee);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return singletonList;
+    }
+
+    private String createEmployee(HashMap<String, Object> data) {
+        try {
+            //get highest id
+            ResultSet rs = connector.executeQuery("SELECT emp_no from employees e order by emp_no desc limit 1");
+
+            // Parse map data to ensure data is sanitized
+            String birthDate = (String) data.get("birthDate");
+            String lastName = (String) data.get("lastName");
+            String firstName = (String) data.get("firstName");
+            String hireDate = (String) data.get("hireDate");
+
+            int newId = rs.getInt("emp_no") + 1;
+            connector.executeQuery("Insert into employees values (" + newId +
+                    "," + birthDate +
+                    "," + firstName +
+                    "," + lastName +
+                    "," + hireDate + ")");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Employee Created Successfully";
+    }
+
+    private String updateEmployee(HashMap<String, Object> data) {
+        try {
+            String birthDate = (String) data.get("birthDate");
+            String firstName = (String) data.get("birthDate");
+            String lastName = (String) data.get("birthDate");
+            int empNo = Integer.parseInt((String) data.get("birthDate"));
+            connector.executeQuery("update employees set " +
+                    "birth_date=" + birthDate +
+                    " first_name=" + firstName +
+                    " last_name=" + lastName +
+                    " where emp_no=" + empNo);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Employee Updated Successfully";
+    }
+
+    private String deleteEmployee(String data) {
+        try {
+            int empNo = Integer.parseInt(data);
+            connector.executeQuery("delete from employees where emp_no=" + empNo);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Employee Deleted Successfully";
+    }
+
+    private void getEmployeeData(ResultSet resultset, Employee employee) throws SQLException {
+        employee.setId(Integer.parseInt(resultset.getString("emp_no")));
+        employee.setFirstName(resultset.getString("first_name"));
+        employee.setLastName(resultset.getString("last_name"));
+        employee.setGender(resultset.getString("gender"));
+        employee.setHireDate(LocalDate.parse(resultset.getString("hire_date")));
+        employee.setBirthDate(LocalDate.parse(resultset.getString("birth_date")));
     }
 }
