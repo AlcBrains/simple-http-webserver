@@ -1,5 +1,7 @@
 package com.christopher.javaserver;
 
+import com.christopher.javaserver.handlers.SalaryHandler;
+import com.christopher.javaserver.handlers.TitleHandler;
 import com.christopher.javaserver.handlers.base.BaseURLHandler;
 import com.christopher.javaserver.handlers.DepartmentHandler;
 import com.christopher.javaserver.handlers.EmployeeHandler;
@@ -23,6 +25,8 @@ public class Application {
         server.createContext("/", new BaseURLHandler());
         server.createContext("/employees", new EmployeeHandler());
         server.createContext("/departments", new DepartmentHandler());
+        server.createContext("/salaries", new SalaryHandler());
+        server.createContext("/titles", new TitleHandler());
 
         Executor executor = Executors.newFixedThreadPool(THREAD_COUNT);
 
