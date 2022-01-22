@@ -32,9 +32,8 @@ public class Connector {
         return INSTANCE;
     }
 
-
     public ResultSet executeQuery(String query) throws SQLException {
-        Statement stmt = connection.createStatement();
+        PreparedStatement stmt = connection.prepareStatement(query);
         return stmt.executeQuery(query);
     }
 

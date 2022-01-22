@@ -1,6 +1,7 @@
 package com.christopher.javaserver;
 
 import com.christopher.javaserver.handlers.base.BaseURLHandler;
+import com.christopher.javaserver.handlers.department.DepartmentHandler;
 import com.christopher.javaserver.handlers.employee.EmployeeHandler;
 import com.sun.net.httpserver.HttpServer;
 
@@ -21,6 +22,7 @@ public class Application {
 
         server.createContext("/", new BaseURLHandler());
         server.createContext("/employees", new EmployeeHandler());
+        server.createContext("/departments", new DepartmentHandler());
 
         Executor executor = Executors.newFixedThreadPool(THREAD_COUNT);
 

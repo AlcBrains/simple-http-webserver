@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class EmployeeHandler extends AbstractHandler {
 
         //Get all employees
         if (path.equals("/employees")) {
-            writeResponseBody(exchange, getAllClients(), 200);
+            writeResponseBody(exchange, getAllEmployees(), 200);
             //Get single employee
         } else if (path.contains("/employees/employee/") && method.equals("GET")) {
             int empNo = Integer.parseInt(path.split("/")[path.split("/").length - 1]);
@@ -33,21 +34,23 @@ public class EmployeeHandler extends AbstractHandler {
             //Create an employee
         } else if (path.equals("/employees/employee/create")) {
             writeResponseBody(exchange, List.of(createEmployee(params)), 201);
-            //Delete client
+            //Delete Employee
         } else if (path.contains("/employees/employee/") && method.equals("DELETE")) {
             int empNo = Integer.parseInt(path.split("/")[path.split("/").length - 1]);
             writeResponseBody(exchange, List.of(deleteEmployee(Integer.toString(empNo))), 204);
-            //Update client
+            //Update Employee
         } else if (path.contains("/employees/employee/") && method.equals("PATCH")) {
             Integer empNo = Integer.parseInt(path.split("/")[path.split("/").length - 1]);
+            params.put("empNo", empNo);
+            writeResponseBody(exchange, List.of(updateEmployee(params)), 204);
         } else {
-
+            writeResponseBody(exchange, Collections.emptyList(), 404);
         }
 
 
     }
 
-    private List<Object> getAllClients() {
+    private List<Object> getAllEmployees() {
         ArrayList<Object> employees = new ArrayList<>();
         try {
             ResultSet resultset = connector.executeQuery("select * from employees e limit 4");
@@ -103,9 +106,9 @@ public class EmployeeHandler extends AbstractHandler {
     private String updateEmployee(HashMap<String, Object> data) {
         try {
             String birthDate = (String) data.get("birthDate");
-            String firstName = (String) data.get("birthDate");
-            String lastName = (String) data.get("birthDate");
-            int empNo = Integer.parseInt((String) data.get("birthDate"));
+            String firstName = (String) data.get("firstName");
+            String lastName = (String) data.get("lastName");
+            int empNo = Integer.parseInt((String) data.get("empNo"));
             connector.executeQuery("update employees set " +
                     "birth_date=" + birthDate +
                     " first_name=" + firstName +

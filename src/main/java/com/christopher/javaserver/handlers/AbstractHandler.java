@@ -29,6 +29,7 @@ public abstract class AbstractHandler implements HttpHandler {
             connector = Connector.getInstance("jdbc:mysql://localhost:3306/employees", "root", "root");
         } catch (SQLException | ClassNotFoundException exception) {
             exception.printStackTrace();
+            System.exit(1);
         }
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
