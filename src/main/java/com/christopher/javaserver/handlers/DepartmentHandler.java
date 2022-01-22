@@ -1,7 +1,6 @@
-package com.christopher.javaserver.handlers.department;
+package com.christopher.javaserver.handlers;
 
 import com.christopher.javaserver.domain.Department;
-import com.christopher.javaserver.handlers.AbstractHandler;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;

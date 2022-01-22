@@ -1,8 +1,8 @@
 package com.christopher.javaserver;
 
 import com.christopher.javaserver.handlers.base.BaseURLHandler;
-import com.christopher.javaserver.handlers.department.DepartmentHandler;
-import com.christopher.javaserver.handlers.employee.EmployeeHandler;
+import com.christopher.javaserver.handlers.DepartmentHandler;
+import com.christopher.javaserver.handlers.EmployeeHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;

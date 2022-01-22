@@ -1,6 +1,5 @@
-package com.christopher.javaserver.handlers.title;
+package com.christopher.javaserver.handlers;
 
-import com.christopher.javaserver.handlers.AbstractHandler;
 import com.sun.net.httpserver.HttpExchange;
 
 public class TitleHandler extends AbstractHandler {
