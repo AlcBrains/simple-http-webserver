@@ -19,7 +19,7 @@ public class DepartmentHandler extends AbstractHandler {
         HashMap<String, Object> params = parseRequestQuery(exchange);
         String path = (String) params.get("path");
         String method = (String) params.get("method");
-        
+
         if (path.equals("/departments")) {
             writeResponseBody(exchange, getAllDepartments(), 200);
             //Get single Department
@@ -47,7 +47,7 @@ public class DepartmentHandler extends AbstractHandler {
     private List<Object> getAllDepartments() {
         ArrayList<Object> departments = new ArrayList<>();
         try {
-            ResultSet resultset = connector.executeQuery("select * from departments e limit 4");
+            ResultSet resultset = connector.executeQuery("select * from departments d");
             while (resultset.next()) {
                 Department department = new Department();
                 getDepartmentData(resultset, department);
@@ -62,7 +62,7 @@ public class DepartmentHandler extends AbstractHandler {
     private List<Object> getDepartment(String deptNo) {
         ArrayList<Object> singletonList = new ArrayList<>();
         try {
-            ResultSet resultset = connector.executeQuery("select * from departments e where dept_no = " + deptNo);
+            ResultSet resultset = connector.executeQuery("select * from departments d where dept_no = " + deptNo);
             Department department = new Department();
             while (resultset.next()) {
                 getDepartmentData(resultset, department);
@@ -76,15 +76,9 @@ public class DepartmentHandler extends AbstractHandler {
 
     private String createDepartment(HashMap<String, Object> data) {
         try {
-            //get highest id
-            ResultSet rs = connector.executeQuery("SELECT dept_no from departments e order by dept_no desc limit 1");
-
-            // Parse map data to ensure data is sanitized
-            //TODO : sanitize input
             String deptNo = (String) data.get("deptNo");
             String deptName = (String) data.get("deptName");
 
-            int newId = rs.getInt("dept_no") + 1;
             connector.executeQuery("Insert into departments values (" + deptNo + ", " + deptName + ")");
         } catch (SQLException e) {
             e.printStackTrace();

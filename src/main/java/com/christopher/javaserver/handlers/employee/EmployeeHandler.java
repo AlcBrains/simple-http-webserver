@@ -85,7 +85,6 @@ public class EmployeeHandler extends AbstractHandler {
             //get highest id
             ResultSet rs = connector.executeQuery("SELECT emp_no from employees e order by emp_no desc limit 1");
 
-            // Parse map data to ensure data is sanitized
             String birthDate = (String) data.get("birthDate");
             String lastName = (String) data.get("lastName");
             String firstName = (String) data.get("firstName");
@@ -131,7 +130,7 @@ public class EmployeeHandler extends AbstractHandler {
     }
 
     private void getEmployeeData(ResultSet resultset, Employee employee) throws SQLException {
-        employee.setId(Integer.parseInt(resultset.getString("emp_no")));
+        employee.setId(resultset.getInt("emp_no"));
         employee.setFirstName(resultset.getString("first_name"));
         employee.setLastName(resultset.getString("last_name"));
         employee.setGender(resultset.getString("gender"));
