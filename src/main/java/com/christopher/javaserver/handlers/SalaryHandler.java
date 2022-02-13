@@ -53,6 +53,8 @@ public class SalaryHandler extends AbstractHandler {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connector.closeConnection();
         }
         return salaries;
     }
@@ -70,48 +72,44 @@ public class SalaryHandler extends AbstractHandler {
             singletonList.add(salary);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connector.closeConnection();
         }
         return singletonList;
     }
 
     private String createSalary(HashMap<String, Object> data) {
-        try {
 
-            String empNo = (String) data.get("empNo");
-            String salary = (String) data.get("salary");
-            String fromDate = (String) data.get("fromDate");
-            String toDate = (String) data.get("toDate");
 
-            connector.executeQuery("Insert into salaries values (" + empNo + ", " + salary + ", " + fromDate + ", " + toDate + ")");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        String empNo = (String) data.get("empNo");
+        String salary = (String) data.get("salary");
+        String fromDate = (String) data.get("fromDate");
+        String toDate = (String) data.get("toDate");
+
+        connector.executeQuery("Insert into salaries values (" + empNo + ", " + salary + ", " + fromDate + ", " + toDate + ")");
+
         return "Salary Created Successfully";
     }
 
     private String updateSalary(HashMap<String, Object> data) {
-        try {
-            int salary = (int) data.get("salary");
-            String empNo = (String) data.get("empNo");
-            String fromDate = (String) data.get("fromDate");
-            connector.executeQuery("update salaries set " +
-                    " salary=" + salary +
-                    " where emp_no=" + empNo +
-                    " and from_date=" + fromDate);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        int salary = (int) data.get("salary");
+        String empNo = (String) data.get("empNo");
+        String fromDate = (String) data.get("fromDate");
+        connector.executeQuery("update salaries set " +
+                " salary=" + salary +
+                " where emp_no=" + empNo +
+                " and from_date=" + fromDate);
+        connector.closeConnection();
         return "Salary Updated Successfully";
     }
 
     private String deleteSalary(HashMap<String, Object> data) {
-        try {
-            String empNo = (String) data.get("empNo");
-            String fromDate = (String) data.get("fromDate");
-            connector.executeQuery("delete from salaries where emp_no=" + empNo + " and from_date=" + fromDate);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        String empNo = (String) data.get("empNo");
+        String fromDate = (String) data.get("fromDate");
+        connector.executeQuery("delete from salaries where emp_no=" + empNo + " and from_date=" + fromDate);
+        connector.closeConnection();
         return "Salary Deleted Successfully";
     }
 

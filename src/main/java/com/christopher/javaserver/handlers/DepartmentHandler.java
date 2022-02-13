@@ -54,6 +54,8 @@ public class DepartmentHandler extends AbstractHandler {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connector.closeConnection();
         }
         return departments;
     }
@@ -69,41 +71,34 @@ public class DepartmentHandler extends AbstractHandler {
             singletonList.add(department);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connector.closeConnection();
         }
         return singletonList;
     }
 
     private String createDepartment(HashMap<String, Object> data) {
-        try {
-            String deptNo = (String) data.get("deptNo");
-            String deptName = (String) data.get("deptName");
+        String deptNo = (String) data.get("deptNo");
+        String deptName = (String) data.get("deptName");
 
-            connector.executeQuery("Insert into departments values (" + deptNo + ", " + deptName + ")");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connector.executeQuery("Insert into departments values (" + deptNo + ", " + deptName + ")");
+        connector.closeConnection();
         return "Department Created Successfully";
     }
 
     private String updateDepartment(HashMap<String, Object> data) {
-        try {
-            String deptName = (String) data.get("deptName");
-            String deptNo = (String) data.get("deptNo");
-            connector.executeQuery("update departments set " +
-                    " dept_name=" + deptName +
-                    " where dept_no=" + deptNo);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        String deptName = (String) data.get("deptName");
+        String deptNo = (String) data.get("deptNo");
+        connector.executeQuery("update departments set " +
+                " dept_name=" + deptName +
+                " where dept_no=" + deptNo);
+        connector.closeConnection();
         return "Department Updated Successfully";
     }
 
     private String deleteDepartment(String data) {
-        try {
-            connector.executeQuery("delete from departments where dept_no=" + data);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connector.executeQuery("delete from departments where dept_no=" + data);
         return "Department Deleted Successfully";
     }
 

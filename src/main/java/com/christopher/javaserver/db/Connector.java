@@ -6,13 +6,16 @@ public class Connector {
 
     private static final Connector INSTANCE = new Connector();
     private static Connection connection;
+    private static String URL;
+    private static String USER;
+    private static String PASSWORD;
 
     private Connector() {
-    }
-
-    private static void setInstance(String url, String user, String password) throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        connection = DriverManager.getConnection(url, user, password);
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            //todo: add logging message
+        }
     }
 
     /**
@@ -23,18 +26,46 @@ public class Connector {
      * @param password Password for said user
      * @return the Connection object used for queries
      */
-    public static Connector getInstance(String url, String user, String password) throws SQLException, ClassNotFoundException {
-        if (connection == null) {
-            synchronized (Connector.class) {
-                setInstance(url, user, password);
+    public static Connector getInstance(String url, String user, String password) {
+        URL = url;
+        USER = user;
+        PASSWORD = password;
+        try {
+            if (connection == null || connection.isClosed()) {
+                synchronized (Connector.class) {
+                    connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                }
             }
+        } catch (SQLException e) {
+            //todo: add logging error
+            e.printStackTrace();
+            System.exit(1);
         }
         return INSTANCE;
     }
 
-    public ResultSet executeQuery(String query) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(query);
-        return stmt.executeQuery(query);
+    public ResultSet executeQuery(String query) {
+
+        try {
+            if (connection.isClosed()) {
+                getInstance(URL, USER, PASSWORD);
+            }
+            PreparedStatement stmt = connection.prepareStatement(query);
+            return stmt.executeQuery(query);
+        } catch (SQLException e) {
+            //todo : log sql exception error
+            closeConnection();
+            return null;
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            connection.close();
+        } catch (SQLException ex) {
+            // todo:add logger message
+        }
+
     }
 
 }

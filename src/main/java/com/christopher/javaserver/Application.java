@@ -3,10 +3,9 @@ package com.christopher.javaserver;
 import com.christopher.javaserver.authenticator.SampleAuthenticator;
 import com.christopher.javaserver.handlers.SalaryHandler;
 import com.christopher.javaserver.handlers.TitleHandler;
-import com.christopher.javaserver.handlers.base.BaseURLHandler;
+import com.christopher.javaserver.handlers.BaseURLHandler;
 import com.christopher.javaserver.handlers.DepartmentHandler;
 import com.christopher.javaserver.handlers.EmployeeHandler;
-import com.sun.net.httpserver.BasicAuthenticator;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 
@@ -19,7 +18,7 @@ import java.util.concurrent.Executors;
 
 public class Application {
     private static final int THREAD_COUNT = 2;
-    private static final int PORT_NO = 9000;
+    private static final int PORT_NO = 9999;
 
 
     public static void main(String[] args) throws IOException {

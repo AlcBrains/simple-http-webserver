@@ -53,6 +53,8 @@ public class TitleHandler extends AbstractHandler {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connector.closeConnection();
         }
         return titles;
     }
@@ -73,51 +75,45 @@ public class TitleHandler extends AbstractHandler {
             singletonList.add(title);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connector.closeConnection();
         }
         return singletonList;
     }
 
     private String createTitle(HashMap<String, Object> data) {
-        try {
 
-            String empNo = (String) data.get("empNo");
-            String title = (String) data.get("title");
-            String fromDate = (String) data.get("fromDate");
-            String toDate = (String) data.get("toDate");
+        String empNo = (String) data.get("empNo");
+        String title = (String) data.get("title");
+        String fromDate = (String) data.get("fromDate");
+        String toDate = (String) data.get("toDate");
 
-            connector.executeQuery("Insert into titles values (" + empNo + ", " + title + ", " + fromDate + ", " + toDate + ")");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connector.executeQuery("Insert into titles values (" + empNo + ", " + title + ", " + fromDate + ", " + toDate + ")");
+        connector.closeConnection();
         return "Title Created Successfully";
     }
 
     private String updateTitle(HashMap<String, Object> data) {
-        try {
-            int title = (int) data.get("title");
-            String empNo = (String) data.get("empNo");
-            String fromDate = (String) data.get("fromDate");
-            String toDate = (String) data.get("toDate");
-            connector.executeQuery("update titles set " +
-                    " title=" + title +
-                    " where emp_no=" + empNo +
-                    " and from_date=" + fromDate +
-                    " and to_date=" + toDate);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        int title = (int) data.get("title");
+        String empNo = (String) data.get("empNo");
+        String fromDate = (String) data.get("fromDate");
+        String toDate = (String) data.get("toDate");
+        connector.executeQuery("update titles set " +
+                " title=" + title +
+                " where emp_no=" + empNo +
+                " and from_date=" + fromDate +
+                " and to_date=" + toDate);
+        connector.closeConnection();
         return "Title Updated Successfully";
     }
 
     private String deleteTitle(HashMap<String, Object> data) {
-        try {
-            String empNo = (String) data.get("empNo");
-            String fromDate = (String) data.get("fromDate");
-            String toDate = (String) data.get("toDate");
-            connector.executeQuery("delete from titles where emp_no=" + empNo + " and from_date=" + fromDate + " and to_date=" + toDate);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        String empNo = (String) data.get("empNo");
+        String fromDate = (String) data.get("fromDate");
+        String toDate = (String) data.get("toDate");
+        connector.executeQuery("delete from titles where emp_no=" + empNo + " and from_date=" + fromDate + " and to_date=" + toDate);
+        connector.closeConnection();
         return "Title Deleted Successfully";
     }
 

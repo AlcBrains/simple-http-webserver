@@ -14,7 +14,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +24,8 @@ public abstract class AbstractHandler implements HttpHandler {
     ObjectMapper objectMapper;
 
     public AbstractHandler() {
-        try {
-            connector = Connector.getInstance("jdbc:mysql://localhost:3306/employees", "root", "root");
-        } catch (SQLException | ClassNotFoundException exception) {
-            exception.printStackTrace();
-            System.exit(1);
-        }
+
+        connector = Connector.getInstance("jdbc:mysql://localhost:3306/employees", "root", "root");
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
     }

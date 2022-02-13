@@ -60,6 +60,8 @@ public class EmployeeHandler extends AbstractHandler {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connector.closeConnection();
         }
         return employees;
     }
@@ -75,6 +77,8 @@ public class EmployeeHandler extends AbstractHandler {
             singletonList.add(employee);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connector.closeConnection();
         }
         return singletonList;
     }
@@ -97,34 +101,32 @@ public class EmployeeHandler extends AbstractHandler {
                     "," + hireDate + ")");
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connector.closeConnection();
         }
         return "Employee Created Successfully";
     }
 
     private String updateEmployee(HashMap<String, Object> data) {
-        try {
-            String birthDate = (String) data.get("birthDate");
-            String firstName = (String) data.get("firstName");
-            String lastName = (String) data.get("lastName");
-            int empNo = Integer.parseInt((String) data.get("empNo"));
-            connector.executeQuery("update employees set " +
-                    "birth_date=" + birthDate +
-                    " first_name=" + firstName +
-                    " last_name=" + lastName +
-                    " where emp_no=" + empNo);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        String birthDate = (String) data.get("birthDate");
+        String firstName = (String) data.get("firstName");
+        String lastName = (String) data.get("lastName");
+        int empNo = Integer.parseInt((String) data.get("empNo"));
+        connector.executeQuery("update employees set " +
+                "birth_date=" + birthDate +
+                " first_name=" + firstName +
+                " last_name=" + lastName +
+                " where emp_no=" + empNo);
+
         return "Employee Updated Successfully";
     }
 
     private String deleteEmployee(String data) {
-        try {
-            int empNo = Integer.parseInt(data);
-            connector.executeQuery("delete from employees where emp_no=" + empNo);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        int empNo = Integer.parseInt(data);
+        connector.executeQuery("delete from employees where emp_no=" + empNo);
+
         return "Employee Deleted Successfully";
     }
 
