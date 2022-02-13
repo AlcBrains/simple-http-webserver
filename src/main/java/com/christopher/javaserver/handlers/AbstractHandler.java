@@ -31,31 +31,6 @@ public abstract class AbstractHandler implements HttpHandler {
     }
 
     /**
-     * TODO : remove when debugging is finished
-     * Prints basic request info. Used for debugging purposes
-     *
-     * @param exchange the HttpExchange object under inspection
-     */
-    private void printRequestInfo(HttpExchange exchange) {
-        System.out.println("-- headers --");
-        Headers requestHeaders = exchange.getRequestHeaders();
-        requestHeaders.entrySet().forEach(System.out::println);
-
-        System.out.println("-- principal --");
-        HttpPrincipal principal = exchange.getPrincipal();
-        System.out.println(principal);
-
-        System.out.println("-- method --");
-        String requestMethod = exchange.getRequestMethod();
-        System.out.println(requestMethod);
-
-        System.out.println("-- query --");
-        URI requestURI = exchange.getRequestURI();
-        String query = requestURI.getQuery();
-        System.out.println(query);
-    }
-
-    /**
      * Writes the provided response to an outputStream and sends it to the client
      *
      * @param exchange     the HttpExchange object to write data to

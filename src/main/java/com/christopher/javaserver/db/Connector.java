@@ -62,6 +62,9 @@ public class Connector {
         }
     }
 
+    /*
+     * closes an active connection
+     */
     public void closeConnection() {
         try {
             connection.close();
