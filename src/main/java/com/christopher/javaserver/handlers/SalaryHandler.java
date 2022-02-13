@@ -11,8 +11,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SalaryHandler extends AbstractHandler {
+
+    private static final Logger LOGGER = Logger.getLogger("SalaryHandler");
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -52,7 +56,7 @@ public class SalaryHandler extends AbstractHandler {
                 salaries.add(salary);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         } finally {
             connector.closeConnection();
         }
@@ -71,7 +75,7 @@ public class SalaryHandler extends AbstractHandler {
             }
             singletonList.add(salary);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         } finally {
             connector.closeConnection();
         }

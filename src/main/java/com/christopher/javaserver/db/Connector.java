@@ -1,8 +1,12 @@
 package com.christopher.javaserver.db;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Connector {
+
+    private static final Logger LOGGER = Logger.getLogger("Connector");
 
     private static final Connector INSTANCE = new Connector();
     private static Connection connection;
@@ -37,8 +41,7 @@ public class Connector {
                 }
             }
         } catch (SQLException e) {
-            //todo: add logging error
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
             System.exit(1);
         }
         return INSTANCE;
@@ -53,7 +56,7 @@ public class Connector {
             PreparedStatement stmt = connection.prepareStatement(query);
             return stmt.executeQuery(query);
         } catch (SQLException e) {
-            //todo : log sql exception error
+            LOGGER.log(Level.SEVERE, e.getMessage());
             closeConnection();
             return null;
         }
@@ -63,7 +66,7 @@ public class Connector {
         try {
             connection.close();
         } catch (SQLException ex) {
-            // todo:add logger message
+            LOGGER.log(Level.SEVERE, ex.getMessage());
         }
 
     }

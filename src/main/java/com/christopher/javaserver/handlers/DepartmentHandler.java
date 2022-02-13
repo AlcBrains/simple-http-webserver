@@ -10,8 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DepartmentHandler extends AbstractHandler {
+
+    private static final Logger LOGGER = Logger.getLogger("DepartmentHandler");
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -53,7 +57,7 @@ public class DepartmentHandler extends AbstractHandler {
                 departments.add(department);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         } finally {
             connector.closeConnection();
         }
@@ -70,7 +74,7 @@ public class DepartmentHandler extends AbstractHandler {
             }
             singletonList.add(department);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         } finally {
             connector.closeConnection();
         }
