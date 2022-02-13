@@ -39,13 +39,8 @@ public abstract class AbstractHandler implements HttpHandler {
      */
 
     protected void writeResponseBody(HttpExchange exchange, List<Object> responseData, int rCode) throws IOException {
-        String response;
-        if (responseData.size() == 1) {
-            response = objectMapper.writeValueAsString(responseData.get(0));
-        } else {
-            response = objectMapper.writeValueAsString(responseData);
-        }
 
+        String response = objectMapper.writeValueAsString(responseData);
         exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(rCode, response.length());
         OutputStream os = exchange.getResponseBody();
